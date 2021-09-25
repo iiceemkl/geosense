@@ -49,6 +49,12 @@ public class TestGeoSense extends TestCase {
 		assertEquals("Asia/Bangkok", tz4.getID());
 	}
 
+	public void testFindTimeZoneExtent(){
+		TZWorld.TZExtent tz1 = GeoSense.getTimeZoneExtent(37.29390,-121.91413);
+		System.out.println("Result below \n" + tz1.getTimeZone().getID());
+		assertEquals("America/Los_Angeles", tz1.getTimeZone().getID());
+	}
+
 	public void testGetTimeZonesByCountry() {
 		List<TimeZone> usTZs = GeoSense.getTimeZones("US");
 		assertTrue(usTZs.contains(TimeZone.getTimeZone("America/New_York")));
@@ -60,7 +66,6 @@ public class TestGeoSense extends TestCase {
 		TimeZone deTZ = GeoSense.getATimeZone("DE");
 		assertNotNull(deTZ);
 		assertEquals("Europe/Berlin", deTZ.getID());
-
 	}
 
 	public void testGetACountryByTimezone() {
@@ -74,7 +79,6 @@ public class TestGeoSense extends TestCase {
 		System.out.println(thTZ);
 		assertNotNull(thTZ);
 		assertEquals("Asia/Bangkok", thTZ.getID());
-
 	}
 
 	public void testGetRegion() {
@@ -88,7 +92,5 @@ public class TestGeoSense extends TestCase {
 
 		String thR = GeoSense.getARegion(GeoSense.getTimeZone(37.29390,-121.91413),"US");
 		assertEquals("CA", thR);
-
 	}
-
 }
