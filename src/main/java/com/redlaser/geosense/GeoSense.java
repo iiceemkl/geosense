@@ -1,18 +1,18 @@
 /**
  * GeoSense.java
- * 
+ *
  * Copyright (c) 2013 eBay Software Foundation
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License. 
+ * limitations under the License.
  */
 package com.redlaser.geosense;
 
@@ -29,7 +29,7 @@ import java.util.logging.Logger;
  * Initialization happens when the class is loaded. Available methods will
  * return timezone(s) by geo coordinate, locale, or country, as well as country
  * or locale by timezone. Examples:
- * 
+ *
  * <pre>
  * TimeZone tz1 = GeoSense.getTimeZone(37.29390,-121.91413); // returns America/Los_Angeles
  * String country1 = GeoSense.getACountry(tz1); // returns "US"
@@ -37,12 +37,12 @@ import java.util.logging.Logger;
  * List&lt;TimeZone&gt; tzs2 = GeoSense.getTimeZones("DE"); // returns 1 timezone
  * TimeZone tz2 = GeoSense.getATimeZone("DE"); // returns Europe/Berlin
  * </pre>
- * 
+ *
  * @author Frank D. Russo
  */
 public class GeoSense {
 	private static Logger log = Logger.getLogger(GeoSense.class.getName());
-	
+
 	private static TZWorld tzWorld;
 	private static ZoneTab zoneTab;
 	private static Map<String, RegionalTZ> regionalZones;
@@ -52,7 +52,7 @@ public class GeoSense {
 		try {
 			tzWorld = new TZWorld(GeoSense.class.getResource("tzworld/"), "tz_world_mp");
 			zoneTab = new ZoneTab(GeoSense.class.getResourceAsStream("zone.tab"));
-			
+
 			regionalZones = new HashMap<String, RegionalTZ>();
 			regionalZones.put("US", new RegionalTZ(GeoSense.class.getResourceAsStream("tz_US.txt")));
 		}
@@ -60,7 +60,7 @@ public class GeoSense {
 			log.severe(e.toString());
 		}
 	}
-	
+
 	public static TimeZone getTimeZone(double lat, double lon) {
 		TimeZone tz = tzWorld.findTimeZone(lat, lon);
 		if (tz != null)
@@ -68,41 +68,41 @@ public class GeoSense {
 
 		// fall back to a normalized Etc time zone by longitude
 		int offset = (int) Math.round(lon / 15.0);
-		
+
 		// NOTE Etc naming convention is opposite the actual offset in hours
 		tz = TimeZone.getTimeZone("Etc/GMT" + (offset <= 0 ? "+" + (-offset) : "-" + offset));
 
 		return tz;
 	}
-	
+
 	public static TZWorld.TZExtent getTimeZoneExtent(double lat, double lon) {
 		return tzWorld.findTimeZoneExtent(lat, lon);
 	}
-	
+
 	public static List<TimeZone> getTimeZones(String country) {
 		return zoneTab.getTimeZones(country);
 	}
-	
+
 	public static TimeZone getATimeZone(String country) {
 		return zoneTab.getATimeZone(country);
 	}
-	
+
 	public static List<TimeZone> getTimeZones(Locale locale) {
 		return zoneTab.getTimeZones(locale);
 	}
-	
+
 	public static TimeZone getATimeZone(Locale locale) {
 		return zoneTab.getATimeZone(locale);
 	}
-	
+
 	public static List<String> getCountries(TimeZone tz) {
 		return zoneTab.getCountries(tz);
 	}
-	
+
 	public static String getACountry(TimeZone tz) {
 		return zoneTab.getACountry(tz);
 	}
-	
+
 	public static List<TimeZone> getTimeZones(String country, String region) {
 		// region is used only where we have regional info for a country
 		if (regionalZones.containsKey(country)) {
@@ -114,7 +114,7 @@ public class GeoSense {
 		// fallback is by country
 		return getTimeZones(country);
 	}
-	
+
 	public static TimeZone getATimeZone(String country, String region) {
 		// region is used only where we have regional info for a country
 		if (regionalZones.containsKey(country)) {
@@ -126,7 +126,7 @@ public class GeoSense {
 		// fallback is by country
 		return getATimeZone(country);
 	}
-	
+
 	public static List<String> getRegions(TimeZone tz, String country) {
 		// call makes sense only where we have regional info for a country
 		if (regionalZones.containsKey(country)) {
@@ -136,7 +136,7 @@ public class GeoSense {
 		// no fallback
 		return null;
 	}
-	
+
 	public static String getARegion(TimeZone tz, String country) {
 		// call makes sense only where we have regional info for a country
 		if (regionalZones.containsKey(country)) {

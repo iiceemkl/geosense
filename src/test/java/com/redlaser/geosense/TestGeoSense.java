@@ -1,22 +1,23 @@
 /**
  * TestGeoSense.java
- * 
+ *
  * Copyright (c) 2013 eBay Software Foundation
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License. 
+ * limitations under the License.
  */
 package com.redlaser.geosense;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.TimeZone;
 
 import junit.framework.TestCase;
@@ -29,36 +30,65 @@ public class TestGeoSense extends TestCase {
 		// force initialization once
 		GeoSense.init();
 	}
-	
+
 	public void testGetTimeZone() {
 		TimeZone tz1 = GeoSense.getTimeZone(37.29390,-121.91413);
 		assertNotNull(tz1);
 		assertEquals("America/Los_Angeles", tz1.getID());
-		
+
 		TimeZone tz2 = GeoSense.getTimeZone(0.0,50.0); // Etc/GMT-3
 		assertNotNull(tz2);
 		assertEquals("Etc/GMT-3", tz2.getID());
-		
+
 		TimeZone tz3 = GeoSense.getTimeZone(0.0,-20.0); // Etc/GMT+1
 		assertNotNull(tz3);
 		assertEquals("Etc/GMT+1", tz3.getID());
+
+		TimeZone tz4 = GeoSense.getTimeZone(13.8, 100.4);
+		assertNotNull(tz4);
+		assertEquals("Asia/Bangkok", tz4.getID());
 	}
 
 	public void testGetTimeZonesByCountry() {
 		List<TimeZone> usTZs = GeoSense.getTimeZones("US");
 		assertTrue(usTZs.contains(TimeZone.getTimeZone("America/New_York")));
 		assertTrue(usTZs.contains(TimeZone.getTimeZone("America/Denver")));
-		
+
 		List<TimeZone> deTZs = GeoSense.getTimeZones("DE");
 		assertTrue(deTZs.contains(TimeZone.getTimeZone("Europe/Berlin")));
-		
+
 		TimeZone deTZ = GeoSense.getATimeZone("DE");
 		assertNotNull(deTZ);
 		assertEquals("Europe/Berlin", deTZ.getID());
+
 	}
 
 	public void testGetACountryByTimezone() {
 		String country = GeoSense.getACountry(TimeZone.getTimeZone("Asia/Shanghai"));
 		assertEquals("CN", country);
 	}
+
+	public void testGetATimeZone() {
+		//get capital by country and region
+		TimeZone thTZ = GeoSense.getATimeZone("TH","Asia");
+		System.out.println(thTZ);
+		assertNotNull(thTZ);
+		assertEquals("Asia/Bangkok", thTZ.getID());
+
+	}
+
+	public void testGetRegion() {
+		//get capital by country and region
+		TimeZone test = GeoSense.getTimeZone(37.29390,-121.91413);
+		System.out.println(test);
+		List<String> usR = GeoSense.getRegions(test,"US"); //zone.tab
+		System.out.println(usR.toString()); //file tz_US
+		assertNotNull(usR);
+		assertEquals("[CA, NV, OR, WA]", usR.toString());
+
+		String thR = GeoSense.getARegion(GeoSense.getTimeZone(37.29390,-121.91413),"US");
+		assertEquals("CA", thR);
+
+	}
+
 }
