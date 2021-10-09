@@ -48,13 +48,13 @@ public class TestGeoSense extends TestCase {
 		assertNotNull(tz4);
 		assertEquals("Asia/Bangkok", tz4.getID());
 	}
-
+/*
 	public void testFindTimeZoneExtent(){
 		TZWorld.TZExtent tz1 = GeoSense.getTimeZoneExtent(37.29390,-121.91413);
 		System.out.println("Result below \n" + tz1.getTimeZone().getID());
 		assertEquals("America/Los_Angeles", tz1.getTimeZone().getID());
 	}
-
+*/
 	public void testGetTimeZonesByCountry() {
 		List<TimeZone> usTZs = GeoSense.getTimeZones("US");
 		assertTrue(usTZs.contains(TimeZone.getTimeZone("America/New_York")));
@@ -92,5 +92,29 @@ public class TestGeoSense extends TestCase {
 
 		String thR = GeoSense.getARegion(GeoSense.getTimeZone(37.29390,-121.91413),"US");
 		assertEquals("CA", thR);
+	}
+
+	public void testGetCountries(){
+		//return list of countries
+		Locale lo = Locales.get("en_us");
+		TimeZone test = GeoSense.getATimeZone(lo);
+		//TimeZone test = GeoSense.getTimeZone(37.29390,-121.91413);
+
+		List<String> usR = GeoSense.getCountries(test);
+		assertEquals("[US]",usR.toString());
+	}
+
+	public void testGetTimeZones(){
+		//return list of timezone acorrding to the given country and region
+		List<TimeZone> tz = GeoSense.getTimeZones("US","US");
+		System.out.println(tz);
+		//assertEquals("[US]",tz.);
+		assertTrue(tz.contains(TimeZone.getTimeZone("America/New_York")));
+
+		List<TimeZone> tz2 = GeoSense.getTimeZones("TH","Asia");
+		System.out.println(tz2);
+		//assertEquals("[US]",tz.);
+		assertTrue(tz2.contains(TimeZone.getTimeZone("Asia/Bangkok")));
+
 	}
 }
